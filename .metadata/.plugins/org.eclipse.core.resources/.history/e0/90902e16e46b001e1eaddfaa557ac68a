@@ -1,0 +1,70 @@
+package com.kh.member.controller;
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.kh.member.model.vo.Member;
+
+/**
+ * Servlet implementation class MemberInsertController
+ */
+@WebServlet("/insert.me")
+public class MemberInsertController extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public MemberInsertController() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		//1) 인코딩
+		request.setCharacterEncoding("UTF-8");
+		
+		// 2) 요청시 전달값 추출해서 변수 및 객체 저장
+		String userId = request.getParameter("userId"); //"user03"
+		String userPwd = request.getParameter("userPwd"); //"pass03"
+		String userName = request.getParameter("userName");// 손흥민
+		String phone = request.getParameter("phone"); // 010xxxxxxxx | ""
+		String email = request.getParameter("email"); //asdfhoha@naver.com | ""
+		String address = request.getParameter("address"); // xx시 xx구 xx동 | ""
+		String[] interestArr = request.getParameterValues("interest"); // ["운동","낚시"] | null
+		
+		// String[] --> String으로 변경(왜나하면 sql에서 varchar2형태이니까)
+		// ["운동","낚시"] --> "운동,낚시"
+		
+		String interest = "";
+		if(interestArr != null) {
+			interest = String.join(",", interestArr);
+		}
+		
+		// 1. 기본 생성자로 생성 후 setter매소드 이용해서 담기
+		// 2. 매개변수 생성자 이용해서 생성과 동시에 담아주는 것
+		Member m = new Member(userId, userPwd, userName, phone, email, address, interest);
+		
+		// 3) service에 sql 요청 => service => dao => sql실행
+		new MemberService().insertMember(m);
+		
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		doGet(request, response);
+	}
+
+}
